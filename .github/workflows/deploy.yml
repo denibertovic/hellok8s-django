@@ -1,0 +1,58 @@
+name: k8s
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      namespace:
+        required: true
+        type: string
+      url:
+        required: true
+        type: string
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: helm
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ inputs.url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Setup Kubectl
+        uses: azure/setup-kubectl@v4.0.0
+      - name: Setup Helm
+        uses: azure/setup-helm@v4.0.0
+      - name: Install sops
+        uses: mdgreenwald/mozilla-sops-action@v1.6.0
+        with:
+          version: "3.8.1" # default is latest stable
+      - name: Install make
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends make
+      - name: Setup Kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          cat <<EOF > ~/.kube/k8s.yaml
+          ${{ secrets.KUBECONFIG_YAML }}
+          EOF
+          chmod 700 ~/.kube/k8s.yaml
+        shell: bash
+      - name: Setup age keys
+        run: |
+          mkdir -p ~/.age
+          cat <<EOF > ~/.age/keys.txt
+          ${{ secrets.AGE_KEY_FILE }}
+          EOF
+          chmod 700 ~/.age/keys.txt
+        shell: bash
+      - name: set SHORT_SHA
+        run: echo "SHORT_SHA=$(git rev-parse --short=8 HEAD)" >> $GITHUB_ENV
+      - name: Helm deploy
+        shell: bash
+        env:
+          IMAGE_TAG: "sha-${{ env.SHORT_SHA }}"
+          NAMESPACE: "${{ inputs.namespace }}"
+          ENVIRONMENT: "${{ inputs.environment }}"
+        run: make SOPS_AGE_KEY_FILE=$HOME/.age/keys.txt KUBECONFIG=$HOME/.kube/k8s.yaml deploy

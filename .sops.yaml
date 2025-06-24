@@ -1,0 +1,7 @@
+# This is just an example using AGE (but similiar how we would use PGP)
+# In a production type setting we would usually use something like AWS KMS
+# or hashicorp vault or similar
+creation_rules:
+  # deni and ci
+  - age: >-
+      age1qwlg46xu2fgczhahnazt4jf228s9jz6fssvwfmxzpsv4r5mzv52ss7pl20, age170vhjvasjn8hq999ynmfysda7au80z56uhhg4utvwh3yke4qfs8swprt5m

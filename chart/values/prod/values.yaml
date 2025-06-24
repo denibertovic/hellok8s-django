@@ -1,0 +1,33 @@
+appConfig:
+  djangoDebug: false
+  djangoAllowedHosts: "hellok8s-django.deni.cloud"
+  djangoHostname: hellok8s-django.deni.cloud
+  djangoProd: true
+  djangoSettingsModule: "project.settings"
+  csrfCookieSecure: true
+  csrfTrustedOrigins: "https://hellok8s-django.deni.cloud"
+  gunicornProcesses: 2
+  awsS3RegionName: fr-par
+
+resources:
+  limits:
+    cpu: 1
+    memory: 1024Mi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+  hosts:
+    - host: hellok8s-django.deni.cloud
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: hellok8s-django
+      hosts:
+        - hellok8s-django.deni.cloud

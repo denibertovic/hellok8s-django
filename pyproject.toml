@@ -1,0 +1,22 @@
+[project]
+name = "hellok8s"
+version = "0.1.0"
+description = "Example django project deployment for k8s"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "boto3>=1.38.46",
+    "django>=5.2.3",
+    "django-environ>=0.12.0",
+    "django-storages>=1.14.6",
+    "djangorestframework>=3.16.0",
+    "gunicorn>=23.0.0",
+    "psycopg2>=2.9.10",
+]
+
+[dependency-groups]
+dev = [
+    "django-browser-reload>=1.18.0",
+    "ipython>=9.3.0",
+    "pywatchman>=3.0.0",
+]

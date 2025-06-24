@@ -1,0 +1,18 @@
+{
+  "name": "hellok8s-django",
+  "packageManager": "yarn@4.9.1",
+  "dependencies": {
+    "@tailwindcss/cli": "4.1.0",
+    "tailwindcss": "4.1.0"
+  },
+  "devDependencies": {
+    "@anthropic-ai/claude-code": "1.0.35",
+    "@google/gemini-cli": "^0.1.7",
+    "@openai/codex": "0.1.2505172129",
+    "@sourcegraph/amp": "^0.0.1750867290-ga796ca"
+  },
+  "scripts": {
+    "build-css": "tailwindcss -i ./core/static/css/input.css -o ./core/static/css/output.css",
+    "watch-css": "tailwindcss -i ./core/static/css/input.css -o ./core/static/css/output.css --watch"
+  }
+}

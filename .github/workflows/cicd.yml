@@ -1,0 +1,125 @@
+name: build and deploy
+permissions:
+  id-token: write # Important for at least docker gha cache
+  contents: read
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: lint
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.2.2
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        # In non demo project we'd want to enable caching here
+        # but I temporarily disabled it because github was having issues
+        # at the time I was testing this out
+        # with:
+        #   enable-cache: true
+        #   cache-dependency-glob: "uv.lock"
+      - name: Intall ruff
+        run: uv add --dev ruff
+      - name: Install dependencies
+        run: uv sync
+      - name: Run linter
+        run: uv run ruff check .
+  helm-lint:
+    runs-on: ubuntu-latest
+    name: helm-lint
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.2.2
+      - name: Setup Helm
+        uses: azure/setup-helm@v4.0.0
+      - name: Install make
+        run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends make
+      - name: Install sops
+        uses: mdgreenwald/mozilla-sops-action@v1.6.0
+        with:
+          version: "3.8.1" # default is latest stable
+      - name: Setup age keys
+        run: |
+          mkdir -p ~/.age
+          cat <<EOF > ~/.age/keys.txt
+          ${{ secrets.AGE_KEY_FILE }}
+          EOF
+          chmod 700 ~/.age/keys.txt
+      - name: set SHORT_SHA
+        run: echo "SHORT_SHA=$(git rev-parse --short=8 HEAD)" >> $GITHUB_ENV
+      - name: Helm lint
+        shell: bash
+        env:
+          IMAGE_TAG: "sha-${{ env.SHORT_SHA }}"
+          NAMESPACE: "hellok8s"
+          ENVIRONMENT: "prod"
+        run: make SOPS_AGE_KEY_FILE=$HOME/.age/keys.txt KUBECONFIG=/tmp/noop.yaml helm-lint
+  format:
+    runs-on: ubuntu-latest
+    name: format
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.2.2
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        # In non demo project we'd want to enable caching here
+        # but I temporarily disabled it because github was having issues
+        # at the time I was testing this out
+        # with:
+        #   enable-cache: true
+        #   cache-dependency-glob: "uv.lock"
+      - name: Intall ruff
+        run: uv add --dev ruff
+      - name: Install dependencies
+        run: uv sync
+      - name: Check Python formatting
+        run: uv run ruff format --check .
+  test:
+    runs-on: ubuntu-latest
+    name: test
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4.2.2
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+        # In non demo project we'd want to enable caching here
+        # but I temporarily disabled it because github was having issues
+        # at the time I was testing this out
+        # with:
+        #   enable-cache: true
+        #   cache-dependency-glob: "uv.lock"
+      - name: Install dependencies
+        run: uv sync
+      - name: Run Django tests
+        run: uv run python manage.py test
+        env:
+          DJANGO_TEST: true
+  build:
+    uses: ./.github/workflows/build.yml
+    needs: ["lint", "format", "test", "helm-lint"]
+    secrets: inherit
+  deploy_prod:
+    uses: ./.github/workflows/deploy.yml
+    if: github.ref == 'refs/heads/main'
+    needs: ["build"]
+    with:
+      environment: "prod"
+      namespace: "hellok8s"
+      url: https://hellok8s-django.deni.cloud
+    secrets: inherit

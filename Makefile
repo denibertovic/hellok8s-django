@@ -22,6 +22,7 @@ require-%:
 clean:
 	@rm -rf .devenv
 	@rm -rf .direnv
+	@rm -rf node_modules
 
 ## Build docker image
 build-docker-image: require-SHORT_SHA

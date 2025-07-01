@@ -22,7 +22,7 @@
     />
     <meta
       property="og:image"
-      content="{% block og_image %}{{ request.build_absolute_uri }}{% static 'img/hellok8s-django.png' %}{% endblock %}"
+      content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/hellok8s-django.png' %}{% endblock %}"
     />
     <meta property="og:site_name" content="hellok8s-django" />
 
@@ -42,7 +42,7 @@
     />
     <meta
       property="twitter:image"
-      content="{% block twitter_image %}{{ request.build_absolute_uri }}{% static 'img/hellok8s-django.png' %}{% endblock %}"
+      content="{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/hellok8s-django.png' %}{% endblock %}"
     />
 
     <!-- Generic meta -->

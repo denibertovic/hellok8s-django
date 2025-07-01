@@ -1,12 +1,14 @@
-{% extends "base.html" %} {% block title %}{{ post.title }} - hellok8s-django{%
-endblock %} {% load static %} {% block og_url %}{{ request.scheme }}://{{
-request.get_host }}{% url 'post:detail' post_id=post.id slug=post.slug %}{%
-endblock %} {% block twitter_url %}{{ request.scheme }}://{{ request.get_host
-}}{% url 'post:detail' post_id=post.id slug=post.slug %}{% endblock %} {% block
-og_image %}{{ request.scheme }}://{{ request.get_host }}{% static
-'img/hellok8s-django.png' %}{% endblock %} {% block twitter_image %}{{
-request.scheme }}://{{ request.get_host }}{% static 'img/hellok8s-django.png'
-%}{% endblock %} {% block content %}
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} - hellok8s-django{% endblock %}
+
+{% load static %}
+{% block og_url %}{{ request.scheme }}://{{ request.get_host }}{% url 'post:detail' post_id=post.id slug=post.slug %}{% endblock %}
+{% block twitter_url %}{{ request.scheme }}://{{ request.get_host }}{% url 'post:detail' post_id=post.id slug=post.slug %}{% endblock %}
+{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/hellok8s-django.png' %}{% endblock %}
+{% block twitter_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'img/hellok8s-django.png' %}{% endblock %}
+
+{% block content %}
 <div
   class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900"
 >

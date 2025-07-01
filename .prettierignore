@@ -1,2 +1,5 @@
 chart/
 node_modules/
+
+# Django templates - prettier doesn't understand Django template syntax
+**/templates/**/*.html

@@ -1,15 +1,67 @@
 {% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}hellok8s-django{% endblock %}</title>
-    <link href="{% static 'css/output.css' %}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body>
-    {% block content %}
-    {% endblock %}
-</body>
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="{% block og_url %}{{ request.build_absolute_uri }}{% endblock %}"
+    />
+    <meta
+      property="og:title"
+      content="{% block og_title %}hellok8s-django{% endblock %}"
+    />
+    <meta
+      property="og:description"
+      content="{% block og_description %}Modern Django deployment showcasing containerization, Kubernetes orchestration, and production-ready infrastructure{% endblock %}"
+    />
+    <meta
+      property="og:image"
+      content="{% block og_image %}{{ request.build_absolute_uri }}{% static 'img/hellok8s-django.png' %}{% endblock %}"
+    />
+    <meta property="og:site_name" content="hellok8s-django" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta
+      property="twitter:url"
+      content="{% block twitter_url %}{{ request.build_absolute_uri }}{% endblock %}"
+    />
+    <meta
+      property="twitter:title"
+      content="{% block twitter_title %}hellok8s-django{% endblock %}"
+    />
+    <meta
+      property="twitter:description"
+      content="{% block twitter_description %}Modern Django deployment showcasing containerization, Kubernetes orchestration, and production-ready infrastructure{% endblock %}"
+    />
+    <meta
+      property="twitter:image"
+      content="{% block twitter_image %}{{ request.build_absolute_uri }}{% static 'img/hellok8s-django.png' %}{% endblock %}"
+    />
+
+    <!-- Generic meta -->
+    <meta
+      name="description"
+      content="{% block meta_description %}Modern Django deployment showcasing containerization, Kubernetes orchestration, and production-ready infrastructure{% endblock %}"
+    />
+    <meta
+      name="author"
+      content="{% block meta_author %}Deni Bertovic{% endblock %}"
+    />
+
+    <link href="{% static 'css/output.css' %}" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    {% block content %} {% endblock %}
+  </body>
 </html>

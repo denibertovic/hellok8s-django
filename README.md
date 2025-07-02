@@ -282,7 +282,7 @@ make IMAGE_TAG=<tag> ENVIRONMENT=<env> NAMESPACE=<ns> KUBECONFIG=<config> deploy
 make IMAGE_TAG=v1.0.0 ENVIRONMENT=prod NAMESPACE=hellok8s KUBECONFIG=~/.kube/config deploy
 ```
 
-`NOTE`: I make it a point in all projets to enable developers to run commands locally that the CI invokes. This is very useful when fires arise.
+`NOTE`: I make it a point in all projects to enable developers to run commands locally that the CI invokes. This is very useful when fires arise.
 
 ## Testing
 

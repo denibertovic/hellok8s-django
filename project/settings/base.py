@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
     "core",
     "myauth",
     "storages",
@@ -162,3 +163,32 @@ LOGGING = {
         "level": "WARNING",
     },
 }
+
+# Redis Configuration
+REDIS_URL = env.get_value("REDIS_URL", default="redis://redis:6379/0")
+
+# Celery Configuration
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
+
+# Django-ratelimit configuration
+RATELIMIT_USE_CACHE = "default"
+RATELIMIT_ENABLE = not DEBUG
+
+# Cache configuration for django-ratelimit
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": REDIS_URL,
+    }
+}
+
+# Commented out to allow proper async task processing in development
+# Uncomment if you want tasks to run synchronously in development
+# if DEBUG:
+#     CELERY_TASK_ALWAYS_EAGER = True
+#     CELERY_TASK_EAGER_PROPAGATES = True

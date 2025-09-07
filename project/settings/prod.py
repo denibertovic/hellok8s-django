@@ -35,3 +35,7 @@ AWS_S3_SIGNATURE_VERSION = "s3v4"
 
 AWS_S3_HOST = "s3.%s.scw.cloud" % (AWS_S3_REGION_NAME,)
 AWS_S3_ENDPOINT_URL = "https://%s" % (AWS_S3_HOST,)
+
+# Celery production overrides
+CELERY_TASK_ALWAYS_EAGER = False
+CELERY_TASK_EAGER_PROPAGATES = False

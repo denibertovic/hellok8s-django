@@ -112,6 +112,7 @@ affinity: {}
 # NOTE: these need to be overriden in values/<env>/{values.yaml,secrets.yaml}
 appConfig:
   djangoDebug: null
+  redisUrl: null
   djangoDatabaseUrl: null
   djangoSecretKey: null
   djangoAllowedHosts: null
@@ -137,3 +138,10 @@ collectstatic:
     app.kubernetes.io/component: collectstatic
   podAnnotations: {}
   resources: {}
+
+worker:
+  labels:
+    app.kubernetes.io/component: worker
+  podAnnotations: {}
+  resources: {}
+  replicaCount: 1

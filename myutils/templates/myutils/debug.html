@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Information</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen">
+    <div class="container mx-auto px-6 py-8">
+        <!-- Back to Home Link -->
+        <div class="mb-8">
+            <a href="/" class="inline-flex items-center text-white hover:text-gray-300 transition-colors">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Back to Home
+            </a>
+        </div>
+
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-white mb-4">Debug Information</h1>
+            <p class="text-xl text-gray-300">System and environment information</p>
+        </div>
+
+        <!-- Content -->
+        <div class="max-w-2xl mx-auto">
+            <!-- Server Hostname Section -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-6">
+                <h2 class="text-2xl font-semibold text-white mb-4">Server Hostname</h2>
+                <div class="bg-gray-800 rounded-md p-4">
+                    <code class="text-green-400 text-lg font-mono">{{ hostname }}</code>
+                </div>
+                <p class="text-gray-300 mt-3 text-sm">
+                    This shows the actual hostname of the server/container handling your request.
+                    Useful for demonstrating Kubernetes load balancing across multiple pods.
+                </p>
+            </div>
+
+            <!-- Celery Worker Demo Section -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-6">
+                <h2 class="text-2xl font-semibold text-white mb-4">Celery Worker Demo</h2>
+                <p class="text-gray-300 mb-4 text-sm">
+                    This demonstrates background task processing using Celery workers.
+                    The task simulates work by sleeping for 3 seconds, useful for showcasing distributed task processing in Kubernetes.
+                </p>
+
+                <div class="space-y-4">
+                    <button id="triggerTask"
+                            class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                        Trigger Background Task
+                    </button>
+
+                    <div id="taskStatus" class="hidden">
+                        <div class="bg-gray-800 rounded-md p-4">
+                            <div id="loadingSpinner" class="flex items-center space-x-2">
+                                <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
+                                <span class="text-blue-400">Task in progress...</span>
+                            </div>
+                            <div id="taskResult" class="hidden">
+                                <span class="text-green-400">Task completed: </span>
+                                <code class="text-green-400" id="resultText"></code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% csrf_token %}
+
+    <script>
+        document.getElementById('triggerTask').addEventListener('click', async function() {
+            const button = this;
+            const taskStatus = document.getElementById('taskStatus');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const taskResult = document.getElementById('taskResult');
+            const resultText = document.getElementById('resultText');
+
+            // Disable button and show loading
+            button.disabled = true;
+            taskStatus.classList.remove('hidden');
+            loadingSpinner.classList.remove('hidden');
+            taskResult.classList.add('hidden');
+
+            try {
+                // Trigger the task
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                const response = await fetch('{% url "myutils:trigger-task" %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to trigger task');
+                }
+
+                const data = await response.json();
+                const taskId = data.task_id;
+
+                // Poll for task completion
+                const pollInterval = setInterval(async () => {
+                    try {
+                        const statusResponse = await fetch(`/task-status/${taskId}/`);
+                        const statusData = await statusResponse.json();
+
+                        if (statusData.status === 'SUCCESS') {
+                            clearInterval(pollInterval);
+                            loadingSpinner.classList.add('hidden');
+                            taskResult.classList.remove('hidden');
+                            resultText.textContent = statusData.result;
+                            button.disabled = false;
+                        } else if (statusData.status === 'FAILURE') {
+                            clearInterval(pollInterval);
+                            loadingSpinner.classList.add('hidden');
+                            taskResult.classList.remove('hidden');
+                            resultText.textContent = 'Task failed: ' + statusData.result;
+                            button.disabled = false;
+                        }
+                    } catch (error) {
+                        console.error('Error polling task status:', error);
+                    }
+                }, 1000); // Poll every second
+
+            } catch (error) {
+                console.error('Error:', error);
+                taskStatus.classList.add('hidden');
+                button.disabled = false;
+                alert('Failed to trigger task. Please try again.');
+            }
+        });
+
+        // Function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

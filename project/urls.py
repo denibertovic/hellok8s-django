@@ -20,14 +20,13 @@ from django.conf import settings
 from django.urls import path, re_path, include
 from django.views.static import serve
 
-from myutils.views import health_check
 from core.views import index
 
 urlpatterns = [
     path("", index, name="home"),
     path("post/", include("post.urls")),
     path("admin/", admin.site.urls),
-    path("healthz/", health_check, name="health-check"),
+    path("", include("myutils.urls")),
 ]
 
 if settings.DEBUG:

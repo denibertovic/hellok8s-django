@@ -46,14 +46,14 @@
   };
 
   # Uncomment to enable redis
-  # services.redis = {
-  #   enable = true;
-  #   extraConfig = ''
-  #     requirepass devredispassword
-  #     appendonly no
-  #     save ""
-  #   '';
-  # };
+  services.redis = {
+    enable = true;
+    extraConfig = ''
+      requirepass devredispassword
+      appendonly no
+      save ""
+    '';
+  };
 
   # https://devenv.sh/languages/
   # languages.nix.enable = true;
@@ -77,6 +77,7 @@
   processes = {
     web.exec = "./manage.py runserver";
     css.exec = "yarn watch-css";
+    celery.exec = "celery -A project worker --loglevel=info";
   };
 
   git-hooks.hooks.ruff.enable = true;

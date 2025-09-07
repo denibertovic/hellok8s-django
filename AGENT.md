@@ -18,6 +18,8 @@
 ## Architecture
 
 - Django 5.2+ project with PostgreSQL database
+- Settings are split in settings/base.py (for development), settings/test.py (for testing) and settings/prod.py (for production).
+  But test.py and prod.py inherit from base.py and override or add as necessary while trying to share as much as possible.
 - Apps: `myauth` (custom user), `post` (blog posts), `myutils` (shared behaviors), `core` (storage, etc)
 - Kubernetes deployment with Helm charts in `chart/`
 - AWS S3/Scaleway object storage for static/media files via django-storages

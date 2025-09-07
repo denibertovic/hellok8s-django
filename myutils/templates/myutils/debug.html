@@ -96,8 +96,44 @@
                     }
                 });
 
+                if (response.status === 429) {
+                    // Rate limited - show specific rate limit message
+                    const retryAfter = parseInt(response.headers.get('Retry-After') || '60');
+                    const responseText = await response.text();
+                    
+                    loadingSpinner.classList.add('hidden');
+                    taskResult.classList.remove('hidden');
+                    taskResult.innerHTML = `
+                        <div class="text-yellow-400">
+                            <span>Rate Limited:</span> ${responseText}<br>
+                            <span>Try again in:</span> <code id="countdown">${retryAfter} seconds</code>
+                        </div>
+                    `;
+                    
+                    // Keep button disabled and start countdown
+                    button.textContent = `Wait ${retryAfter}s`;
+                    let remainingTime = retryAfter;
+                    
+                    const countdownInterval = setInterval(() => {
+                        remainingTime--;
+                        document.getElementById('countdown').textContent = `${remainingTime} seconds`;
+                        button.textContent = `Wait ${remainingTime}s`;
+                        
+                        if (remainingTime <= 0) {
+                            clearInterval(countdownInterval);
+                            button.disabled = false;
+                            button.textContent = 'Trigger Background Task';
+                            taskResult.innerHTML = `
+                                <div class="text-green-400">Ready: You can now trigger a new task</div>
+                            `;
+                        }
+                    }, 1000);
+                    
+                    return;
+                }
+
                 if (!response.ok) {
-                    throw new Error('Failed to trigger task');
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                 }
 
                 const data = await response.json();
@@ -129,9 +165,10 @@
 
             } catch (error) {
                 console.error('Error:', error);
-                taskStatus.classList.add('hidden');
+                loadingSpinner.classList.add('hidden');
+                taskResult.classList.remove('hidden');
+                taskResult.innerHTML = `<div class="text-red-400">Error: ${error.message}</div>`;
                 button.disabled = false;
-                alert('Failed to trigger task. Please try again.');
             }
         });
 

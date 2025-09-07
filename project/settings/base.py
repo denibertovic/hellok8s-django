@@ -65,6 +65,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_ratelimit.middleware.RatelimitMiddleware",
 ]
 
 if DEBUG:
@@ -177,7 +178,8 @@ CELERY_TIMEZONE = TIME_ZONE
 
 # Django-ratelimit configuration
 RATELIMIT_USE_CACHE = "default"
-RATELIMIT_ENABLE = not DEBUG
+RATELIMIT_ENABLE = True  # not DEBUG
+RATELIMIT_VIEW = "myutils.views.ratelimit_view"
 
 # Cache configuration for django-ratelimit
 CACHES = {

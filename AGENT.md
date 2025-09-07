@@ -33,3 +33,13 @@
 - Test files: `tests.py` in each app, inherit from `django.test.TestCase`
 - String representations required for models (`__str__` method)
 - Use `get_user_model()` for user model references
+
+## Rate Limiting
+
+- Uses django-ratelimit with Redis cache backend
+- Rate limited endpoints return HTTP 429 (Too Many Requests) instead of 403
+- Response includes `Retry-After` header with calculated seconds until retry is allowed
+- Current rate limit: 1 request per 2 minutes per IP for `/trigger-long-task/`
+- Rate limiting can be disabled by setting `RATELIMIT_ENABLE = False`
+- Custom rate limit view: `myutils.views.ratelimit_view` handles 429 responses
+- Rate parsing supports formats: `X/s` (seconds), `X/m` (minutes), `X/h` (hours), `X/d` (days)

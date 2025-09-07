@@ -115,8 +115,7 @@ appConfig:
   djangoDatabaseUrl: null
   djangoSecretKey: null
   djangoAllowedHosts: null
-  djangoSettingsModule: "project.settings"
-  djangoProd: false
+  djangoSettingsModule: "project.settings.base"
   djangoHostname: null
   csrfCookieSecure: null
   csrfTrustedOrigins: null

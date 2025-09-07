@@ -17,7 +17,7 @@ env = environ.Env()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -162,49 +162,3 @@ LOGGING = {
         "level": "WARNING",
     },
 }
-
-PROD = env.bool("DJANGO_PROD", False)
-if PROD:
-    # for static files
-    STORAGES = {
-        "default": {
-            "BACKEND": "core.customstorage.PublicMediaStorage",
-        },
-        "staticfiles": {
-            "BACKEND": "core.customstorage.StaticStorage",
-        },
-    }
-
-    # Remove query string since the bucket is public
-    AWS_QUERYSTRING_AUTH = False
-
-    # This should make the static url be servable via nginx
-    AWS_S3_CUSTOM_DOMAIN = "hellok8s-django.deni.cloud"
-
-    # another option is to get secrets directly from a secret store like
-    # hashicorp vault (or similar) - either during bootup or on-demand
-    AWS_ACCESS_KEY_ID = env.get_value("AWS_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY = env.get_value("AWS_SECRET_ACCESS_KEY")
-
-    AWS_STORAGE_BUCKET_NAME = env.get_value("AWS_STORAGE_BUCKET_NAME")
-    AWS_S3_REGION_NAME = env.get_value("AWS_S3_REGION_NAME")
-
-    AWS_DEFAULT_ACL = "public-read"
-    AWS_S3_SIGNATURE_VERSION = "s3v4"
-
-    AWS_S3_HOST = "s3.%s.scw.cloud" % (AWS_S3_REGION_NAME,)
-    AWS_S3_ENDPOINT_URL = "https://%s" % (AWS_S3_HOST,)
-
-
-TEST = env.bool("DJANGO_TEST", False)
-if TEST:
-    # Use SQLite for testing for faster test execution
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": ":memory:",  # In-memory database for fastest tests
-        }
-    }
-    PASSWORD_HASHERS = [
-        "django.contrib.auth.hashers.MD5PasswordHasher",
-    ]

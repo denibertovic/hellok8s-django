@@ -11,12 +11,11 @@ metadata:
     "helm.sh/hook-weight": "-3"
 data:
   DJANGO_DEBUG: "{{ .Values.appConfig.djangoDebug }}"
+  DJANGO_SETTINGS_MODULE: "{{ .Values.appConfig.djangoSettingsModule }}"
   DJANGO_DATABASE_URL: "{{ .Values.appConfig.djangoDatabaseUrl }}"
-  DJANGO_PROD: "{{ .Values.appConfig.djangoProd }}"
   DJANGO_SECRET_KEY: "{{ .Values.appConfig.djangoSecretKey }}"
   DJANGO_HOSTNAME: "{{ .Values.appConfig.djangoHostname }}"
   DJANGO_ALLOWED_HOSTS: "{{ .Values.appConfig.djangoAllowedHosts }}"
-  DJANGO_SETTINGS_MODULE: "{{ .Values.appConfig.djangoSettingsModule }}"
   DJANGO_CSRF_COOKIE_SECURE: "{{ .Values.appConfig.csrfCookieSecure }}"
   DJANGO_CSRF_TRUSTED_ORIGINS: "{{ .Values.appConfig.csrfTrustedOrigins }}"
   AWS_STORAGE_BUCKET_NAME: "{{ .Values.appConfig.awsStorageBucketName }}"

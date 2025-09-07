@@ -76,7 +76,7 @@ helm-template: require-IMAGE_TAG require-ENVIRONMENT require-NAMESPACE
 
 ## Run Django tests (optionally pass APP)
 test:
-	@DJANGO_TEST=true python manage.py test ${APP}
+	@DJANGO_SETTINGS_MODULE=project.settings.test python manage.py test ${APP}
 
 ## Show help screen.
 help:

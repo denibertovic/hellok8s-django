@@ -109,7 +109,7 @@ jobs:
       - name: Run Django tests
         run: uv run python manage.py test
         env:
-          DJANGO_TEST: true
+          DJANGO_SETTINGS_MODULE: project.settings.test
   build:
     uses: ./.github/workflows/build.yml
     needs: ["lint", "format", "test", "helm-lint"]

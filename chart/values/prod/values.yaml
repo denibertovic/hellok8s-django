@@ -2,8 +2,7 @@ appConfig:
   djangoDebug: false
   djangoAllowedHosts: "hellok8s-django.deni.cloud"
   djangoHostname: hellok8s-django.deni.cloud
-  djangoProd: true
-  djangoSettingsModule: "project.settings"
+  djangoSettingsModule: "project.settings.prod"
   csrfCookieSecure: true
   csrfTrustedOrigins: "https://hellok8s-django.deni.cloud"
   gunicornProcesses: 2

@@ -2,8 +2,8 @@
 
 ## Commands
 
-- Test: `python manage.py test [app.tests.TestClass.test_method]` (single test format)
-- Run dev server: `python manage.py runserver`
+- Test: `make APP=app.tests.TestClass.test_method test` (single test format)
+- Run dev server: `devenv processes up -d` - ALWAYS check if it's already running first.
 - Migrate: `python manage.py makemigrations && python manage.py migrate`
 - Build Docker: `make SHORT_SHA=<sha> build-docker-image`
 - Deploy: `make IMAGE_TAG=<tag> ENVIRONMENT=<env> NAMESPACE=<ns> KUBECONFIG=<config> deploy`

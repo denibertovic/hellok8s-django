@@ -13,6 +13,7 @@ data:
   DJANGO_DEBUG: "{{ .Values.appConfig.djangoDebug }}"
   DJANGO_SETTINGS_MODULE: "{{ .Values.appConfig.djangoSettingsModule }}"
   DJANGO_DATABASE_URL: "{{ .Values.appConfig.djangoDatabaseUrl }}"
+  REDIS_URL: "{{ .Values.appConfig.redisUrl }}"
   DJANGO_SECRET_KEY: "{{ .Values.appConfig.djangoSecretKey }}"
   DJANGO_HOSTNAME: "{{ .Values.appConfig.djangoHostname }}"
   DJANGO_ALLOWED_HOSTS: "{{ .Values.appConfig.djangoAllowedHosts }}"

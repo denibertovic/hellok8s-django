@@ -529,9 +529,6 @@
   .border-gray-700 {
     border-color: var(--color-gray-700);
   }
-  .border-red-200 {
-    border-color: var(--color-red-200);
-  }
   .border-red-600 {
     border-color: var(--color-red-600);
   }
@@ -559,9 +556,6 @@
   .bg-green-500 {
     background-color: var(--color-green-500);
   }
-  .bg-green-600 {
-    background-color: var(--color-green-600);
-  }
   .bg-indigo-600 {
     background-color: var(--color-indigo-600);
   }
@@ -573,9 +567,6 @@
   }
   .bg-purple-600 {
     background-color: var(--color-purple-600);
-  }
-  .bg-red-50 {
-    background-color: var(--color-red-50);
   }
   .bg-red-100 {
     background-color: var(--color-red-100);
@@ -854,13 +845,6 @@
       }
     }
   }
-  .hover\:bg-green-700 {
-    &:hover {
-      @media (hover: hover) {
-        background-color: var(--color-green-700);
-      }
-    }
-  }
   .hover\:bg-indigo-700 {
     &:hover {
       @media (hover: hover) {
@@ -924,11 +908,6 @@
   .focus\:ring-gray-500 {
     &:focus {
       --tw-ring-color: var(--color-gray-500);
-    }
-  }
-  .focus\:ring-green-500 {
-    &:focus {
-      --tw-ring-color: var(--color-green-500);
     }
   }
   .focus\:ring-indigo-500 {

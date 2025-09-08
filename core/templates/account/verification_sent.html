@@ -1,26 +1,22 @@
 {% extends "account/base.html" %}
-
 {% block head_title %}Verify Your Email Address{% endblock %}
-
 {% block content_block %}
-<div class="text-center">
-    <div class="mb-6">
-        <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
-            <i class="fas fa-envelope-open-text text-blue-600"></i>
+    <div class="text-center">
+        <div class="mb-6">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 mb-4">
+                <i class="fas fa-envelope-open-text text-blue-600"></i>
+            </div>
+            <h3 class="text-lg font-medium text-white mb-2">Verify Your Email Address</h3>
+            <p class="text-gray-300 mb-4">
+                We have sent an email to you for verification. Follow the link provided to finalize the signup process.
+            </p>
+            <p class="text-gray-400 text-sm">
+                If you don't see the verification email in your "inbox", check your "spam" folder. Please contact us if you do not receive it within a few minutes.
+            </p>
         </div>
-        <h3 class="text-lg font-medium text-white mb-2">Verify Your Email Address</h3>
-        <p class="text-gray-300 mb-4">
-            We have sent an email to you for verification. Follow the link provided to finalize the signup process. 
-        </p>
-        <p class="text-gray-400 text-sm">
-            If you don't see the verification email in your "inbox", check your "spam" folder. Please contact us if you do not receive it within a few minutes.
-        </p>
+        <div class="space-y-4">
+            <a href="{% url 'home' %}"
+               class="text-sm text-purple-400 hover:text-purple-300">Go to home page</a>
+        </div>
     </div>
-    
-    <div class="space-y-4">
-        <a href="{% url 'home' %}" class="text-sm text-purple-400 hover:text-purple-300">
-            Go to home page
-        </a>
-    </div>
-</div>
 {% endblock %}

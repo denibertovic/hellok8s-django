@@ -80,9 +80,19 @@
     celery.exec = "celery -A project worker --loglevel=info";
   };
 
-  git-hooks.hooks.ruff.enable = true;
-  git-hooks.hooks.ruff-format.enable = true;
-  git-hooks.hooks.prettier.enable = true;
+  git-hooks.hooks = {
+    ruff.enable = true;
+    ruff-format.enable = true;
+    prettier.enable = true;
+    djlint = {
+      enable = true;
+      name = "djlint";
+      entry = "djlint . --reformat";
+      types = ["html"];
+      language = "system";
+      pass_filenames = false;
+    };
+  };
 
   # See full reference at https://devenv.sh/reference/options/
 }

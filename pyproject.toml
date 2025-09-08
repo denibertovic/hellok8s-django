@@ -14,6 +14,7 @@ dependencies = [
     "django-ratelimit>=4.1.0",
     "django-storages>=1.14.6",
     "djangorestframework>=3.16.0",
+    "djlint>=1.36.4",
     "gunicorn>=23.0.0",
     "psycopg2>=2.9.10",
     "redis>=6.4.0",
@@ -25,3 +26,14 @@ dev = [
     "ipython>=9.3.0",
     "pywatchman>=3.0.0",
 ]
+
+[tool.djlint]
+profile="django"
+format_js=false
+format_css=false
+
+[tool.djlint.css]
+indent_size=4
+
+[tool.djlint.js]
+indent_size=4

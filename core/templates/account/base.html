@@ -1,19 +1,17 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-    <div class="sm:mx-auto sm:w-full sm:max-w-md">
-        <div class="text-center">
-            <h2 class="text-3xl font-extrabold text-white">
-                {% block head_title %}{% endblock %}
-            </h2>
+    <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+        <div class="sm:mx-auto sm:w-full sm:max-w-md">
+            <div class="text-center">
+                <h2 class="text-3xl font-extrabold text-white">
+                    {% block head_title %}{% endblock %}
+                </h2>
+            </div>
+        </div>
+        <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+            <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm py-8 px-4 shadow rounded-2xl sm:px-10 border border-gray-700 border-opacity-50">
+                {% block content_block %}{% endblock %}
+            </div>
         </div>
     </div>
-
-    <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm py-8 px-4 shadow rounded-2xl sm:px-10 border border-gray-700 border-opacity-50">
-            {% block content_block %}{% endblock %}
-        </div>
-    </div>
-</div>
 {% endblock %}

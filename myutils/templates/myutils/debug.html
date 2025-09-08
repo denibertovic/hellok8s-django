@@ -1,77 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Debug Information</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen">
-    <div class="container mx-auto px-6 py-8">
-        <!-- Back to Home Link -->
-        <div class="mb-8">
-            <a href="/" class="inline-flex items-center text-white hover:text-gray-300 transition-colors">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                </svg>
-                Back to Home
-            </a>
-        </div>
-
-        <!-- Header -->
-        <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-white mb-4">Debug Information</h1>
-            <p class="text-xl text-gray-300">System and environment information</p>
-        </div>
-
-        <!-- Content -->
-        <div class="max-w-2xl mx-auto">
-            <!-- Server Hostname Section -->
-            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-6">
-                <h2 class="text-2xl font-semibold text-white mb-4">Server Hostname</h2>
-                <div class="bg-gray-800 rounded-md p-4">
-                    <code class="text-green-400 text-lg font-mono">{{ hostname }}</code>
-                </div>
-                <p class="text-gray-300 mt-3 text-sm">
-                    This shows the actual hostname of the server/container handling your request.
-                    Useful for demonstrating Kubernetes load balancing across multiple pods.
-                </p>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Debug Information</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen">
+        <div class="container mx-auto px-6 py-8">
+            <!-- Back to Home Link -->
+            <div class="mb-8">
+                <a href="/"
+                   class="inline-flex items-center text-white hover:text-gray-300 transition-colors">
+                    <svg class="w-4 h-4 mr-2"
+                         fill="none"
+                         stroke="currentColor"
+                         viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Back to Home
+                </a>
             </div>
-
-            <!-- Celery Worker Demo Section -->
-            <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-6">
-                <h2 class="text-2xl font-semibold text-white mb-4">Celery Worker Demo</h2>
-                <p class="text-gray-300 mb-4 text-sm">
-                    This demonstrates background task processing using Celery workers.
-                    The task simulates work by sleeping for 3 seconds, useful for showcasing distributed task processing in Kubernetes.
-                </p>
-
-                <div class="space-y-4">
-                    <button id="triggerTask"
-                            class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">
-                        Trigger Background Task
-                    </button>
-
-                    <div id="taskStatus" class="hidden">
-                        <div class="bg-gray-800 rounded-md p-4">
-                            <div id="loadingSpinner" class="flex items-center space-x-2">
-                                <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
-                                <span class="text-blue-400">Task in progress...</span>
-                            </div>
-                            <div id="taskResult" class="hidden">
-                                <span class="text-green-400">Task completed: </span>
-                                <code class="text-green-400" id="resultText"></code>
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-white mb-4">Debug Information</h1>
+                <p class="text-xl text-gray-300">System and environment information</p>
+            </div>
+            <!-- Content -->
+            <div class="max-w-2xl mx-auto">
+                <!-- Server Hostname Section -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-6">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Server Hostname</h2>
+                    <div class="bg-gray-800 rounded-md p-4">
+                        <code class="text-green-400 text-lg font-mono">{{ hostname }}</code>
+                    </div>
+                    <p class="text-gray-300 mt-3 text-sm">
+                        This shows the actual hostname of the server/container handling your request.
+                        Useful for demonstrating Kubernetes load balancing across multiple pods.
+                    </p>
+                </div>
+                <!-- Celery Worker Demo Section -->
+                <div class="bg-white/10 backdrop-blur-sm rounded-lg p-6 mb-6">
+                    <h2 class="text-2xl font-semibold text-white mb-4">Celery Worker Demo</h2>
+                    <p class="text-gray-300 mb-4 text-sm">
+                        This demonstrates background task processing using Celery workers.
+                        The task simulates work by sleeping for 3 seconds, useful for showcasing distributed task processing in Kubernetes.
+                    </p>
+                    <div class="space-y-4">
+                        <button id="triggerTask"
+                                class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+                            Trigger Background Task
+                        </button>
+                        <div id="taskStatus" class="hidden">
+                            <div class="bg-gray-800 rounded-md p-4">
+                                <div id="loadingSpinner" class="flex items-center space-x-2">
+                                    <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
+                                    <span class="text-blue-400">Task in progress...</span>
+                                </div>
+                                <div id="taskResult" class="hidden">
+                                    <span class="text-green-400">Task completed:</span>
+                                    <code class="text-green-400" id="resultText"></code>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
         </div>
-    </div>
-    {% csrf_token %}
-
-    <script>
+        {% csrf_token %}
+        <script>
         document.getElementById('triggerTask').addEventListener('click', async function() {
             const button = this;
             const taskStatus = document.getElementById('taskStatus');
@@ -203,6 +200,6 @@
             }
             return cookieValue;
         }
-    </script>
-</body>
+        </script>
+    </body>
 </html>

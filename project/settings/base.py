@@ -46,9 +46,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
     "core",
     "myauth",
+    "django_cf_turnstile",
+    "allauth",
+    "allauth.account",
+    "rest_framework",
     "storages",
     "myutils",
     "post",
@@ -66,7 +69,52 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_ratelimit.middleware.RatelimitMiddleware",
+    "allauth.account.middleware.AccountMiddleware",  # Required by allauth
 ]
+
+
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "allauth.account.auth_backends.AuthenticationBackend",
+]
+
+# Allauth settings
+ACCOUNT_FORMS = {
+    "login": "myauth.forms.LoginForm",
+    "signup": "myauth.forms.SignupForm",
+    "reset_password": "myauth.forms.ResetPasswordForm",
+}
+
+
+ACCOUNT_ADAPTER = (
+    "myauth.adapters.NoNewUsersAccountAdapter"  # Custom registration control
+)
+
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = [
+    "email*",
+    "password1*",
+    "password2*",
+]
+ACCOUNT_EMAIL_VERIFICATION = (
+    "mandatory"  # Require email verification before account access
+)
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USER_MODEL_EMAIL_FIELD = "email"
+ACCOUNT_LOGOUT_ON_GET = True  # Skip logout confirmation page
+
+# Login/logout URLs
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+ACCOUNT_LOGOUT_REDIRECT_URL = "/"
+
+# Email Configuration
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = env.get_value(
+    "DEFAULT_FROM_EMAIL", default="noreply@send.hellok8s-django.deni.cloud"
+)
+
 
 if DEBUG:
     INSTALLED_APPS += ["django_browser_reload"]
@@ -194,3 +242,15 @@ CACHES = {
 # if DEBUG:
 #     CELERY_TASK_ALWAYS_EAGER = True
 #     CELERY_TASK_EAGER_PROPAGATES = True
+
+
+# Cloudflare turnstile
+CF_TURNSTILE_SITE_KEY = env.get_value(
+    "CF_TURNSTILE_SITE_KEY", default="1x00000000000000000000AA"
+)
+CF_TURNSTILE_SECRET_KEY = env.get_value(
+    "CF_TURNSTILE_SECRET_KEY", default="1x0000000000000000000000000000000AA"
+)
+
+# Registration control
+ALLOW_REGISTRATION = env.bool("DJANGO_ALLOW_REGISTRATION", default=False)

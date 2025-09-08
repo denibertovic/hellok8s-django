@@ -26,6 +26,7 @@ urlpatterns = [
     path("", index, name="home"),
     path("post/", include("post.urls")),
     path("admin/", admin.site.urls),
+    path("accounts/", include("allauth.urls")),
     path("", include("myutils.urls")),
 ]
 

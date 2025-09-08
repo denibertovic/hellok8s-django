@@ -3,3 +3,8 @@ node_modules/
 
 # Django templates - prettier doesn't understand Django template syntax
 **/templates/**/*.html
+
+# generated so just ignore
+core/static/css/output.css
+
+.claude

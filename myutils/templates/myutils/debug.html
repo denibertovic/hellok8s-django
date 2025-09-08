@@ -85,6 +85,9 @@
             loadingSpinner.classList.remove('hidden');
             taskResult.classList.add('hidden');
 
+            // Clear any previous content in taskResult
+            taskResult.innerHTML = '';
+
             try {
                 // Trigger the task
                 const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
@@ -99,8 +102,16 @@
                 if (response.status === 429) {
                     // Rate limited - show specific rate limit message
                     const retryAfter = parseInt(response.headers.get('Retry-After') || '60');
+
+                    // If retry time is 0 or very small, just retry the request immediately
+                    if (retryAfter <= 1) {
+                        setTimeout(() => {
+                            button.click(); // Retry the request automatically
+                        }, 100);
+                        return;
+                    }
                     const responseText = await response.text();
-                    
+
                     loadingSpinner.classList.add('hidden');
                     taskResult.classList.remove('hidden');
                     taskResult.innerHTML = `
@@ -109,26 +120,27 @@
                             <span>Try again in:</span> <code id="countdown">${retryAfter} seconds</code>
                         </div>
                     `;
-                    
+
                     // Keep button disabled and start countdown
                     button.textContent = `Wait ${retryAfter}s`;
                     let remainingTime = retryAfter;
-                    
+
                     const countdownInterval = setInterval(() => {
                         remainingTime--;
                         document.getElementById('countdown').textContent = `${remainingTime} seconds`;
                         button.textContent = `Wait ${remainingTime}s`;
-                        
+
                         if (remainingTime <= 0) {
                             clearInterval(countdownInterval);
                             button.disabled = false;
                             button.textContent = 'Trigger Background Task';
-                            taskResult.innerHTML = `
-                                <div class="text-green-400">Ready: You can now trigger a new task</div>
-                            `;
+                            // Hide the task status section completely so it's clean for next task
+                            taskStatus.classList.add('hidden');
+                            taskResult.classList.add('hidden');
+                            loadingSpinner.classList.add('hidden');
                         }
                     }, 1000);
-                    
+
                     return;
                 }
 
@@ -149,7 +161,11 @@
                             clearInterval(pollInterval);
                             loadingSpinner.classList.add('hidden');
                             taskResult.classList.remove('hidden');
-                            resultText.textContent = statusData.result;
+                            // Reset the taskResult to show the success template
+                            taskResult.innerHTML = `
+                                <span class="text-green-400">Task completed: </span>
+                                <code class="text-green-400" id="resultText">${statusData.result}</code>
+                            `;
                             button.disabled = false;
                         } else if (statusData.status === 'FAILURE') {
                             clearInterval(pollInterval);

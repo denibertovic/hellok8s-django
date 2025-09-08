@@ -39,3 +39,9 @@ AWS_S3_ENDPOINT_URL = "https://%s" % (AWS_S3_HOST,)
 # Celery production overrides
 CELERY_TASK_ALWAYS_EAGER = False
 CELERY_TASK_EAGER_PROPAGATES = False
+
+COLLECTFASTA_STRATEGY = "collectfasta.strategies.boto3.Boto3Strategy"
+COLLECTFASTA_THREADS = 20
+# NOTE it is NOT recommended to use the default cache for but rather
+# a dedicated instance. However since this is just a demo project it's fine.
+COLLECTFASTA_CACHE = "default"

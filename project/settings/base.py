@@ -215,7 +215,9 @@ LOGGING = {
 
 # Redis Configuration
 REDIS_URL = env.get_value("REDIS_URL", default="redis://redis:6379/0")
+REDIS_COLLECTFASTA_URL = env.get_value("REDIS_COLLECTFASTA_URL", default=REDIS_URL)
 
+COLLECTFASTA_STRATEGY = "collectfasta.strategies.filesystem.FileSystemStrategy"
 # Celery Configuration
 CELERY_BROKER_URL = REDIS_URL
 CELERY_RESULT_BACKEND = REDIS_URL

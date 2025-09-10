@@ -24,6 +24,11 @@ clean:
 	@rm -rf .direnv
 	@rm -rf node_modules
 
+
+## tail logs from devenv
+logs:
+	@tail --lines=100 -f .devenv/state/process-compose/process-compose.log
+
 ## Build docker image
 build-docker-image: require-SHORT_SHA
 	@docker buildx build ${CACHE_ARGS} \

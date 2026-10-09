@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% load static %}
+{% load pixbin %}
+{% block title %}Form Widgets - Pixbin SDK Demo{% endblock %}
+{% block extra_head %}
+    {{ upload_form.media }}
+    {% pixbin_js %}
+{% endblock %}
+{% block content %}
+    <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
+        <!-- Header with Nav -->
+        <div class="absolute top-6 left-6 right-6 z-10 flex justify-between items-center">
+            <a href="{% url 'demo:pixbin_landing' %}"
+               class="flex items-center space-x-2 bg-gray-800 bg-opacity-50 hover:bg-opacity-70 backdrop-blur-sm rounded-lg px-4 py-2 border border-gray-700 border-opacity-50 hover:border-purple-500 hover:border-opacity-50 transition-all duration-300">
+                <svg class="w-5 h-5 text-white"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                <span class="text-white text-sm font-medium">Back</span>
+            </a>
+            <!-- Navigation -->
+            <nav class="flex space-x-2 bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-lg p-1 border border-gray-700 border-opacity-50">
+                <a href="{% url 'demo:pixbin_upload' %}"
+                   class="px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors">
+                    Templates
+                </a>
+                <a href="{% url 'demo:pixbin_forms' %}"
+                   class="px-4 py-2 rounded-md text-sm font-medium bg-green-500 text-white">Forms</a>
+                <a href="{% url 'demo:pixbin_sdk' %}"
+                   class="px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors">
+                    SDK
+                </a>
+            </nav>
+        </div>
+        <!-- Main Content -->
+        <section class="px-6 py-24">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+                        Form <span class="text-green-400">Fields & Widgets</span>
+                    </h1>
+                    <p class="text-lg text-gray-300">Ready-to-use form components for image handling</p>
+                </div>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="mb-8 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-500 bg-opacity-20 border border-red-500 border-opacity-50 text-red-300{% else %}bg-green-500 bg-opacity-20 border border-green-500 border-opacity-50 text-green-300{% endif %} text-center">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <div class="space-y-8">
+                    <!-- 1. PixbinImageUploadWidget + verify_exists -->
+                    <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 border-opacity-50">
+                        <h2 class="text-xl font-bold text-white mb-2">
+                            <code class="text-green-400">PixbinImageUploadWidget</code> + <code class="text-green-400">verify_exists</code>
+                        </h2>
+                        <p class="text-gray-400 text-sm mb-4">
+                            The browser asks Django for a presigned URL, uploads straight to S3, and posts back only the image UUID.
+                            The API token never leaves the server. On submit, <code>verify_exists=True</code> asks Pixbin whether that UUID is real before the form validates.
+                        </p>
+                        {# djlint:off #}
+                        <pre class="bg-gray-900 rounded-lg p-3 text-sm text-gray-300 overflow-x-auto mb-4"><code>from django_pixbin.forms import PixbinImageField, PixbinImageUploadWidget
+
+class DirectUploadForm(forms.Form):
+    title = forms.CharField(max_length=200)
+    image = PixbinImageField(
+        verify_exists=True,
+        widget=PixbinImageUploadWidget(),
+    )
+
+# urls.py - serves the presigned URL and complete-upload endpoints
+path('pixbin/', include('django_pixbin.urls'))
+
+# template head - loads upload.js and upload.css
+{% verbatim %}{{ form.media }}{% endverbatim %}</code></pre>
+                        {# djlint:on #}
+                        <form method="post" class="space-y-4">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="upload">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Title</label>
+                                {{ upload_form.title }}
+                                {% if upload_form.title.errors %}
+                                    <p class="text-red-300 text-xs mt-1">{{ upload_form.title.errors|join:" " }}</p>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Image (direct upload)</label>
+                                {{ upload_form.image }}
+                                <p class="text-gray-500 text-xs mt-1">{{ upload_form.image.help_text }}</p>
+                                {% if upload_form.image.errors %}
+                                    <p class="text-red-300 text-xs mt-1">{{ upload_form.image.errors|join:" " }}</p>
+                                {% endif %}
+                            </div>
+                            <button type="submit"
+                                    class="py-2 px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-colors duration-200">
+                                Verify &amp; Save
+                            </button>
+                        </form>
+                    </div>
+                    <!-- 2. PixbinImageWidget via ModelForm -->
+                    <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 border-opacity-50">
+                        <h2 class="text-xl font-bold text-white mb-2">
+                            <code class="text-green-400">PixbinImageWidget</code> in a ModelForm
+                        </h2>
+                        <p class="text-gray-400 text-sm mb-4">
+                            The model <code>PixbinImageField</code> hands ModelForms (and the Django admin) a form field that uses this widget by default.
+                            It shows the current image and fetches a new preview when you paste another UUID.
+                        </p>
+                        {# djlint:off #}
+                        <pre class="bg-gray-900 rounded-lg p-3 text-sm text-gray-300 overflow-x-auto mb-4"><code># models.py
+class Image(models.Model):
+    title = models.CharField(max_length=200)
+    image = PixbinImageField()
+
+# forms.py - no widget configuration needed
+class ImageEditForm(forms.ModelForm):
+    class Meta:
+        model = Image
+        fields = ["title", "image"]</code></pre>
+                        {# djlint:on #}
+                        {% if edit_form %}
+                            {% if images|length > 1 %}
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <span class="text-gray-400 text-sm self-center">Edit:</span>
+                                    {% for img in images %}
+                                        <a href="?image={{ img.id }}"
+                                           class="text-xs px-3 py-1 rounded-lg border {% if img.id == edit_image.id %}border-green-500 text-green-300{% else %}border-gray-600 text-gray-300 hover:border-green-500{% endif %}">
+                                            {{ img.title }}
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <form method="post" action="?image={{ edit_image.id }}" class="space-y-4">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="edit">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Title</label>
+                                    {{ edit_form.title }}
+                                    {% if edit_form.title.errors %}
+                                        <p class="text-red-300 text-xs mt-1">{{ edit_form.title.errors|join:" " }}</p>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Image UUID</label>
+                                    {{ edit_form.image }}
+                                    {% if edit_form.image.errors %}
+                                        <p class="text-red-300 text-xs mt-1">{{ edit_form.image.errors|join:" " }}</p>
+                                    {% endif %}
+                                </div>
+                                <button type="submit"
+                                        class="py-2 px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition-colors duration-200">
+                                    Save
+                                </button>
+                            </form>
+                        {% else %}
+                            <div class="p-4 rounded-lg bg-yellow-500 bg-opacity-20 border border-yellow-500 border-opacity-50 text-yellow-300 text-center">
+                                No images yet. Upload one above or on the <a href="{% url 'demo:pixbin_upload' %}" class="underline">Templates page</a> to edit it here.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}

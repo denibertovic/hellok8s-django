@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Pixbin SDK Demo - hellok8s-django{% endblock %}
+{% block content %}
+    <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
+        <!-- Header -->
+        <div class="absolute top-6 left-6 z-10">
+            <a href="{% url 'home' %}"
+               class="flex items-center space-x-2 bg-gray-800 bg-opacity-50 hover:bg-opacity-70 backdrop-blur-sm rounded-lg px-4 py-2 border border-gray-700 border-opacity-50 hover:border-purple-500 hover:border-opacity-50 transition-all duration-300">
+                <svg class="w-5 h-5 text-white"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                <span class="text-white text-sm font-medium">Back</span>
+            </a>
+        </div>
+        <!-- Main Content -->
+        <section class="px-6 py-24">
+            <div class="max-w-4xl mx-auto">
+                <!-- Hero -->
+                <div class="text-center mb-16">
+                    <h1 class="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight">
+                        <span class="text-purple-400">django-pixbin</span> SDK
+                    </h1>
+                    <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                        A comprehensive Django integration for the Pixbin Image API.
+                        Upload, transform, and serve images with ease.
+                    </p>
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <a href="https://github.com/denibertovic/django-pixbin"
+                           target="_blank"
+                           class="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg border border-gray-600 transition-colors">
+                            View on GitHub
+                        </a>
+                        <a href="https://pixbin.net"
+                           target="_blank"
+                           class="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors">
+                            Pixbin.net
+                        </a>
+                    </div>
+                </div>
+                <!-- Quick Setup -->
+                <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 border-opacity-50 mb-12">
+                    <h2 class="text-xl font-bold text-white mb-4">Quick Setup</h2>
+                    {# djlint:off #}
+                    <pre class="bg-gray-900 rounded-lg p-4 text-sm text-gray-300 overflow-x-auto"><code># Install
+pip install git+https://github.com/denibertovic/django-pixbin.git
+
+# settings.py
+INSTALLED_APPS = [..., 'django_pixbin']
+PIXBIN_API_TOKEN = 'your_token_here'
+
+# urls.py (upload and preview widgets)
+path('pixbin/', include('django_pixbin.urls'))</code></pre>
+                    {# djlint:on #}
+                </div>
+                <!-- Feature Cards -->
+                <h2 class="text-2xl font-bold text-white mb-6 text-center">Explore Features</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Template Tags Card -->
+                    <a href="{% url 'demo:pixbin_upload' %}"
+                       class="group bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 border-opacity-50 hover:border-purple-500 transition-all duration-300">
+                        <div class="w-12 h-12 bg-purple-500 bg-opacity-20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-opacity-30 transition-colors">
+                            <svg class="w-6 h-6 text-purple-400"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Template Tags & Filters</h3>
+                        <p class="text-gray-400 text-sm mb-4">
+                            Transform images directly in templates with tags like
+                            <code class="text-purple-400">pixbin_thumbnail</code>,
+                            <code class="text-purple-400">pixbin_srcset</code>, and more.
+                        </p>
+                        <ul class="text-gray-500 text-xs space-y-1">
+                            <li>
+                                {% verbatim %}
+                                    {% pixbin_thumbnail %}
+                                {% endverbatim %}
+                            </li>
+                            <li>
+                                {% verbatim %}
+                                    {% pixbin_transform %}
+                                {% endverbatim %}
+                            </li>
+                            <li>
+                                {% verbatim %}
+                                    {% pixbin_srcset %}
+                                {% endverbatim %}
+                            </li>
+                            <li>
+                                {% verbatim %}
+                                    {{ image|pixbin_url }}
+                                {% endverbatim %}
+                            </li>
+                        </ul>
+                        <div class="mt-4 text-purple-400 text-sm group-hover:underline">Explore &rarr;</div>
+                    </a>
+                    <!-- Form Widgets Card -->
+                    <a href="{% url 'demo:pixbin_forms' %}"
+                       class="group bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 border-opacity-50 hover:border-purple-500 transition-all duration-300">
+                        <div class="w-12 h-12 bg-green-500 bg-opacity-20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-opacity-30 transition-colors">
+                            <svg class="w-6 h-6 text-green-400"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Form Fields & Widgets</h3>
+                        <p class="text-gray-400 text-sm mb-4">
+                            Ready-to-use form fields with preview thumbnails,
+                            drag-and-drop upload, and validation.
+                        </p>
+                        <ul class="text-gray-500 text-xs space-y-1">
+                            <li>PixbinImageField</li>
+                            <li>PixbinImageWidget (preview, default in ModelForms and admin)</li>
+                            <li>PixbinImageUploadWidget (S3)</li>
+                        </ul>
+                        <div class="mt-4 text-green-400 text-sm group-hover:underline">Explore &rarr;</div>
+                    </a>
+                    <!-- Python SDK Card -->
+                    <a href="{% url 'demo:pixbin_sdk' %}"
+                       class="group bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 border-opacity-50 hover:border-purple-500 transition-all duration-300">
+                        <div class="w-12 h-12 bg-blue-500 bg-opacity-20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-opacity-30 transition-colors">
+                            <svg class="w-6 h-6 text-blue-400"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Python SDK</h3>
+                        <p class="text-gray-400 text-sm mb-4">
+                            Full Python API for uploading, downloading,
+                            status checking, and error handling.
+                        </p>
+                        <ul class="text-gray-500 text-xs space-y-1">
+                            <li>client.upload_file()</li>
+                            <li>client.get_status()</li>
+                            <li>client.download_transformed()</li>
+                            <li>Helper functions</li>
+                            <li>Error handling</li>
+                        </ul>
+                        <div class="mt-4 text-blue-400 text-sm group-hover:underline">Explore &rarr;</div>
+                    </a>
+                </div>
+                <!-- Key Features -->
+                <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                    <div>
+                        <div class="text-3xl font-bold text-purple-400 mb-2">5</div>
+                        <div class="text-gray-400 text-sm">Template Tags</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-green-400 mb-2">3</div>
+                        <div class="text-gray-400 text-sm">Form Components</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-blue-400 mb-2">S3</div>
+                        <div class="text-gray-400 text-sm">Direct Upload</div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-yellow-400 mb-2">JS</div>
+                        <div class="text-gray-400 text-sm">Auto-shimmer</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}

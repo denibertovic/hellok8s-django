@@ -1,0 +1,403 @@
+{% extends "base.html" %}
+{% load static %}
+{% load pixbin %}
+{% block title %}Template Tags - Pixbin SDK Demo{% endblock %}
+{% block extra_head %}
+    {% pixbin_js debug=True %}
+{% endblock %}
+{% block content %}
+    <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
+        <!-- Header with Nav -->
+        <div class="absolute top-6 left-6 right-6 z-10 flex justify-between items-center">
+            <a href="{% url 'demo:pixbin_landing' %}"
+               class="flex items-center space-x-2 bg-gray-800 bg-opacity-50 hover:bg-opacity-70 backdrop-blur-sm rounded-lg px-4 py-2 border border-gray-700 border-opacity-50 hover:border-purple-500 hover:border-opacity-50 transition-all duration-300">
+                <svg class="w-5 h-5 text-white"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                <span class="text-white text-sm font-medium">Back</span>
+            </a>
+            <!-- Navigation -->
+            <nav class="flex space-x-2 bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-lg p-1 border border-gray-700 border-opacity-50">
+                <a href="{% url 'demo:pixbin_upload' %}"
+                   class="px-4 py-2 rounded-md text-sm font-medium bg-purple-500 text-white">Templates</a>
+                <a href="{% url 'demo:pixbin_forms' %}"
+                   class="px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors">
+                    Forms
+                </a>
+                <a href="{% url 'demo:pixbin_sdk' %}"
+                   class="px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors">
+                    SDK
+                </a>
+            </nav>
+        </div>
+        <!-- Main Content -->
+        <section class="px-6 py-24">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+                        Template <span class="text-purple-400">Tags & Filters</span>
+                    </h1>
+                    <p class="text-lg text-gray-300">Transform images directly in Django templates</p>
+                </div>
+                <!-- Messages -->
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="mb-6 p-4 rounded-lg max-w-2xl mx-auto {% if message.tags == 'success' %}bg-green-500 bg-opacity-20 border border-green-500 border-opacity-50 text-green-300{% else %}bg-red-500 bg-opacity-20 border border-red-500 border-opacity-50 text-red-300{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Left Column: Upload & Image List -->
+                    <div class="space-y-6">
+                        <!-- Upload Form -->
+                        <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 border-opacity-50">
+                            <h2 class="text-xl font-bold text-white mb-4">Upload New Image</h2>
+                            <form method="post" enctype="multipart/form-data" class="space-y-4">
+                                {% csrf_token %}
+                                <div>
+                                    <label for="title" class="block text-sm font-medium text-gray-300 mb-2">Title</label>
+                                    <input type="text"
+                                           name="title"
+                                           id="title"
+                                           placeholder="My awesome image"
+                                           class="w-full px-4 py-2 bg-gray-700 bg-opacity-50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent" />
+                                </div>
+                                <div>
+                                    <label for="image" class="block text-sm font-medium text-gray-300 mb-2">Image</label>
+                                    <input type="file"
+                                           name="image"
+                                           id="image"
+                                           accept="image/*"
+                                           required
+                                           class="w-full px-4 py-2 bg-gray-700 bg-opacity-50 border border-gray-600 rounded-lg text-white file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-sm file:bg-purple-500 file:text-white hover:file:bg-purple-600" />
+                                </div>
+                                <button type="submit"
+                                        class="w-full py-2 px-4 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-lg transition-colors duration-200">
+                                    Upload
+                                </button>
+                            </form>
+                        </div>
+                        <!-- Image List -->
+                        <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 border-opacity-50">
+                            <h2 class="text-xl font-bold text-white mb-4">Your Images</h2>
+                            {% if images %}
+                                <div class="space-y-2">
+                                    {% for img in images %}
+                                        <a href="?image={{ img.id }}"
+                                           class="block p-3 rounded-lg border transition-all duration-200 {% if selected_image.id == img.id %}bg-purple-500 bg-opacity-20 border-purple-500{% else %}bg-gray-700 bg-opacity-30 border-gray-600 hover:border-purple-500 hover:bg-opacity-50{% endif %}">
+                                            <div class="flex items-center space-x-3">
+                                                <img src="{% pixbin_thumbnail img.image 40 40 %}"
+                                                     alt="{{ img.title }}"
+                                                     width="40"
+                                                     height="40"
+                                                     class="rounded bg-gray-600" />
+                                                <div class="flex-1 min-w-0">
+                                                    <p class="text-white font-medium truncate">{{ img.title }}</p>
+                                                    <p class="text-gray-400 text-xs">{{ img.created_at|date:"M d, Y" }}</p>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-gray-400 text-center py-4">No images yet. Upload one!</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- Right Column: Showcase -->
+                    <div class="lg:col-span-2">
+                        {% if selected_image %}
+                            <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 border-opacity-50">
+                                <div class="flex justify-between items-start mb-6">
+                                    <div>
+                                        <h2 class="text-2xl font-bold text-white">{{ selected_image.title }}</h2>
+                                        <p class="text-gray-400 text-sm mt-1">
+                                            Pixbin ID: <code class="px-2 py-0.5 bg-gray-700 rounded text-purple-400">{{ selected_image.image }}</code>
+                                        </p>
+                                    </div>
+                                    <button onclick="deleteImage({{ selected_image.id }})"
+                                            class="text-red-400 hover:text-red-300 text-sm">Delete</button>
+                                </div>
+                                <!-- Feature Showcase -->
+                                <div class="space-y-8">
+                                    <!-- 1. pixbin_thumbnail -->
+                                    <div class="border-t border-gray-700 pt-6">
+                                        <h3 class="text-lg font-semibold text-white mb-2">
+                                            <code class="text-purple-400">
+                                                {% verbatim %}
+                                                    {% pixbin_thumbnail %}
+                                                {% endverbatim %}
+                                            </code>
+                                        </h3>
+                                        <p class="text-gray-400 text-sm mb-4">Generates thumbnail URL - you wrap in &lt;img&gt; tag</p>
+                                        {# djlint:off #}
+                                        <pre class="bg-gray-900 rounded-lg p-3 text-sm text-gray-300 overflow-x-auto mb-4"><code>{% verbatim %}&lt;img src="{% pixbin_thumbnail image.image 300 300 %}" ...&gt;{% endverbatim %}</code></pre>
+                                        {# djlint:on #}
+                                        <img src="{% pixbin_thumbnail selected_image.image 300 300 %}"
+                                             alt="Thumbnail"
+                                             width="300"
+                                             height="300"
+                                             class="rounded-lg border border-gray-600 bg-gray-700" />
+                                    </div>
+                                    <!-- 2. pixbin_url filter -->
+                                    <div class="border-t border-gray-700 pt-6">
+                                        <h3 class="text-lg font-semibold text-white mb-2">
+                                            <code class="text-purple-400">
+                                                {% verbatim %}
+                                                    {{ image|pixbin_url }}
+                                                {% endverbatim %}
+                                            </code>
+                                        </h3>
+                                        <p class="text-gray-400 text-sm mb-4">Filter syntax alternative to tags - same functionality, different style</p>
+                                        {# djlint:off #}
+                                        <pre class="bg-gray-900 rounded-lg p-3 text-sm text-gray-300 overflow-x-auto mb-4"><code>{% verbatim %}{# Original image #}
+&lt;img src="{{ image.image|pixbin_url }}" ...&gt;
+
+{# With transformation #}
+&lt;img src="{{ image.image|pixbin_url:'resize:300x300:fit' }}" ...&gt;{% endverbatim %}</code></pre>
+                                        {# djlint:on #}
+                                        <div class="flex gap-4">
+                                            <div>
+                                                <p class="text-gray-500 text-xs mb-2">With resize:300x300:fit</p>
+                                                <img src="{{ selected_image.image|pixbin_url:'resize:300x300:fit' }}"
+                                                     alt="Filter example"
+                                                     width="150"
+                                                     height="150"
+                                                     class="rounded-lg border border-gray-600 bg-gray-700" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 3. pixbin_transform -->
+                                    <div class="border-t border-gray-700 pt-6">
+                                        <h3 class="text-lg font-semibold text-white mb-2">
+                                            <code class="text-purple-400">
+                                                {% verbatim %}
+                                                    {% pixbin_transform %}
+                                                {% endverbatim %}
+                                            </code>
+                                        </h3>
+                                        <p class="text-gray-400 text-sm mb-4">Generates transform URL with custom params</p>
+                                        {# djlint:off #}
+                                        <pre class="bg-gray-900 rounded-lg p-3 text-sm text-gray-300 overflow-x-auto mb-4"><code>{% verbatim %}&lt;img src="{% pixbin_transform image.image 'resize:400x400:fit,grayscale' %}" ...&gt;{% endverbatim %}</code></pre>
+                                        {# djlint:on #}
+                                        <img src="{% pixbin_transform selected_image.image 'resize:400x400:fit,grayscale' %}"
+                                             alt="Grayscale"
+                                             width="400"
+                                             height="400"
+                                             class="rounded-lg border border-gray-600 bg-gray-700" />
+                                    </div>
+                                    <!-- 4. Additional Transformations -->
+                                    <div class="border-t border-gray-700 pt-6">
+                                        <h3 class="text-lg font-semibold text-white mb-2">Additional Transformations</h3>
+                                        <p class="text-gray-400 text-sm mb-4">More transformation options supported by Pixbin</p>
+                                        <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                                            <!-- crop:center -->
+                                            <div class="bg-gray-900 rounded-lg p-3">
+                                                <p class="text-purple-400 text-xs mb-2 font-mono">crop:center</p>
+                                                <img src="{% pixbin_transform selected_image.image 'crop:center,resize:150x150:exact' %}"
+                                                     alt="Center crop"
+                                                     width="150"
+                                                     height="150"
+                                                     class="rounded border border-gray-600 bg-gray-700 w-full" />
+                                            </div>
+                                            <!-- blur -->
+                                            <div class="bg-gray-900 rounded-lg p-3">
+                                                <p class="text-purple-400 text-xs mb-2 font-mono">blur:10</p>
+                                                <img src="{% pixbin_transform selected_image.image 'resize:150x150:fit,blur:10' %}"
+                                                     alt="Blur"
+                                                     width="150"
+                                                     height="150"
+                                                     class="rounded border border-gray-600 bg-gray-700 w-full" />
+                                            </div>
+                                            <!-- sharpen -->
+                                            <div class="bg-gray-900 rounded-lg p-3">
+                                                <p class="text-purple-400 text-xs mb-2 font-mono">sharpen:5</p>
+                                                <img src="{% pixbin_transform selected_image.image 'resize:150x150:fit,sharpen:5' %}"
+                                                     alt="Sharpen"
+                                                     width="150"
+                                                     height="150"
+                                                     class="rounded border border-gray-600 bg-gray-700 w-full" />
+                                            </div>
+                                            <!-- quality:50 -->
+                                            <div class="bg-gray-900 rounded-lg p-3">
+                                                <p class="text-purple-400 text-xs mb-2 font-mono">quality:50</p>
+                                                <img src="{% pixbin_transform selected_image.image 'resize:150x150:fit,quality:50' %}"
+                                                     alt="Low quality"
+                                                     width="150"
+                                                     height="150"
+                                                     class="rounded border border-gray-600 bg-gray-700 w-full" />
+                                            </div>
+                                            <!-- format:webp -->
+                                            <div class="bg-gray-900 rounded-lg p-3">
+                                                <p class="text-purple-400 text-xs mb-2 font-mono">format:webp</p>
+                                                <img src="{% pixbin_transform selected_image.image 'resize:150x150:fit,format:webp' %}"
+                                                     alt="WebP format"
+                                                     width="150"
+                                                     height="150"
+                                                     class="rounded border border-gray-600 bg-gray-700 w-full" />
+                                            </div>
+                                            <!-- Combined -->
+                                            <div class="bg-gray-900 rounded-lg p-3">
+                                                <p class="text-purple-400 text-xs mb-2 font-mono">combined</p>
+                                                <img src="{% pixbin_transform selected_image.image 'resize:150x150:fill,crop:center,quality:85,format:webp' %}"
+                                                     alt="Combined"
+                                                     width="150"
+                                                     height="150"
+                                                     class="rounded border border-gray-600 bg-gray-700 w-full" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- 5. pixbin_srcset -->
+                                    <div class="border-t border-gray-700 pt-6">
+                                        <h3 class="text-lg font-semibold text-white mb-2">
+                                            <code class="text-purple-400">
+                                                {% verbatim %}
+                                                    {% pixbin_srcset %}
+                                                {% endverbatim %}
+                                            </code>
+                                        </h3>
+                                        <p class="text-gray-400 text-sm mb-4">Generates srcset for responsive images - browser picks best size</p>
+                                        {# djlint:off #}
+                                        <pre class="bg-gray-900 rounded-lg p-3 text-sm text-gray-300 overflow-x-auto mb-4"><code>{% verbatim %}&lt;img
+  src="{% pixbin_transform image.image 'resize:800x600:fit' %}"
+  srcset="{% pixbin_srcset image.image '400x300:fit@400w,800x600:fit@800w,1200x900:fit@1200w' %}"
+  sizes="(max-width: 600px) 400px, 800px"
+&gt;{% endverbatim %}</code></pre>
+                                        {# djlint:on #}
+                                        <img src="{% pixbin_transform selected_image.image 'resize:800x600:fit' %}"
+                                             srcset="{% pixbin_srcset selected_image.image '400x300:fit@400w,
+                                                     800x600:fit@800w,
+                                                     1200x900:fit@1200w' %}"
+                                             sizes="(max-width: 600px) 400px,
+                                                    800px"
+                                             alt="Responsive image"
+                                             class="rounded-lg border border-gray-600 bg-gray-700 w-full max-w-2xl" />
+                                    </div>
+                                    <!-- 6. Model Field Helper Method -->
+                                    <div class="border-t border-gray-700 pt-6">
+                                        <h3 class="text-lg font-semibold text-white mb-2">
+                                            <code class="text-purple-400">PixbinImageField</code> Helper Method
+                                        </h3>
+                                        <p class="text-gray-400 text-sm mb-4">The model field adds a get_&lt;field&gt;_url() method to the model</p>
+                                        {# djlint:off #}
+                                        <pre class="bg-gray-900 rounded-lg p-3 text-sm text-gray-300 overflow-x-auto mb-4"><code># In Python views/code:
+image.get_image_url()  # Original
+image.get_image_url('resize:300x300:fit')  # Transformed
+image.get_image_url(include_host=False)  # Path only</code></pre>
+                                        {# djlint:on #}
+                                        <div class="bg-gray-900 rounded-lg p-4">
+                                            <p class="text-gray-300 text-sm">
+                                                <span class="text-gray-500">Transform URL:</span>
+                                                <br>
+                                                <code class="text-purple-400 text-xs break-all">{{ helper_method_url }}</code>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <!-- 7. pixbin_js & Events -->
+                                    <div class="border-t border-gray-700 pt-6">
+                                        <h3 class="text-lg font-semibold text-white mb-2">
+                                            <code class="text-purple-400">
+                                                {% verbatim %}
+                                                    {% pixbin_js %}
+                                                {% endverbatim %}
+                                            </code> & JavaScript Events
+                                        </h3>
+                                        <p class="text-gray-400 text-sm mb-4">Auto-shimmer & polling for images still being processed, plus custom events</p>
+                                        {# djlint:off #}
+                                        <pre class="bg-gray-900 rounded-lg p-3 text-sm text-gray-300 overflow-x-auto mb-4"><code>{% verbatim %}{% load pixbin %}
+
+{# In &lt;head&gt; or before &lt;/body&gt; #}
+{% pixbin_js %}
+{% pixbin_js debug=True poll_interval=1000 %}
+
+{# JavaScript Events #}
+&lt;script&gt;
+document.querySelectorAll('img').forEach(img => {
+    img.addEventListener('pixbin:processing', () => {
+        console.log('Image is processing...');
+    });
+    img.addEventListener('pixbin:ready', () => {
+        console.log('Image is ready!');
+    });
+    img.addEventListener('pixbin:timeout', () => {
+        console.log('Image processing timed out');
+    });
+});
+&lt;/script&gt;{% endverbatim %}</code></pre>
+                                        {# djlint:on #}
+                                        <!-- Event Demo -->
+                                        <div class="bg-gray-900 rounded-lg p-4">
+                                            <p class="text-gray-400 text-sm mb-3">Event Log (upload a new image to see events):</p>
+                                            <div id="event-log"
+                                                 class="font-mono text-xs space-y-1 max-h-32 overflow-y-auto">
+                                                <p class="text-gray-500">Waiting for events...</p>
+                                            </div>
+                                        </div>
+                                        <script>
+                                            const eventLog = document.getElementById('event-log');
+                                            function logEvent(type, detail) {
+                                                const time = new Date().toLocaleTimeString();
+                                                const colors = {
+                                                    'pixbin:processing': 'text-yellow-400',
+                                                    'pixbin:ready': 'text-green-400',
+                                                    'pixbin:timeout': 'text-red-400'
+                                                };
+                                                const p = document.createElement('p');
+                                                p.className = colors[type] || 'text-gray-400';
+                                                p.textContent = `[${time}] ${type}`;
+                                                if (eventLog.firstChild.textContent === 'Waiting for events...') {
+                                                    eventLog.innerHTML = '';
+                                                }
+                                                eventLog.appendChild(p);
+                                                eventLog.scrollTop = eventLog.scrollHeight;
+                                            }
+                                            document.querySelectorAll('img').forEach(img => {
+                                                img.addEventListener('pixbin:processing', () => logEvent('pixbin:processing'));
+                                                img.addEventListener('pixbin:ready', () => logEvent('pixbin:ready'));
+                                                img.addEventListener('pixbin:timeout', () => logEvent('pixbin:timeout'));
+                                            });
+                                        </script>
+                                        <p class="text-gray-400 text-sm mt-4">
+                                            <span class="text-green-400">Active on this page</span> - Upload a new image to see shimmer animation while variants are generated.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-12 border border-gray-700 border-opacity-50 text-center">
+                                <svg class="w-16 h-16 mx-auto text-gray-600 mb-4"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                                <h3 class="text-xl font-semibold text-white mb-2">Select an Image</h3>
+                                <p class="text-gray-400">Upload an image or select one from the list to see the SDK features in action.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <script>
+        function deleteImage(imageId) {
+            if (!confirm('Delete this image?')) return;
+            fetch('?image=' + imageId, {
+                method: 'DELETE',
+                headers: {'X-CSRFToken': '{{ csrf_token }}'},
+            }).then(resp => {
+                if (resp.ok) {
+                    window.location.href = '{% url "demo:pixbin_upload" %}';
+                } else {
+                    resp.json().then(data => alert(data.error || 'Delete failed'));
+                }
+            });
+        }
+    </script>
+{% endblock %}

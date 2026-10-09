@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+
 import environ
 
 env = environ.Env()
@@ -55,6 +56,8 @@ INSTALLED_APPS = [
     "storages",
     "myutils",
     "post",
+    "django_pixbin",
+    "demo",
 ]
 
 # custom auth
@@ -256,3 +259,7 @@ CF_TURNSTILE_SECRET_KEY = env.get_value(
 
 # Registration control
 ALLOW_REGISTRATION = env.bool("DJANGO_ALLOW_REGISTRATION", default=False)
+
+# Pixbin Configuration
+PIXBIN_API_TOKEN = env.get_value("PIXBIN_API_TOKEN", default="")
+PIXBIN_BASE_URL = env.get_value("PIXBIN_BASE_URL", default="https://pixbin.net")

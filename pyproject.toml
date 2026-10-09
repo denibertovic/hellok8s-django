@@ -19,7 +19,13 @@ dependencies = [
     "gunicorn>=23.0.0",
     "psycopg2>=2.9.10",
     "redis>=6.4.0",
+    "pixbin[full]",
+    "django-pixbin",
 ]
+
+[tool.uv.sources]
+pixbin = { path = "../pixbin-python", editable = true }
+django-pixbin = { path = "../django-pixbin", editable = true }
 
 [dependency-groups]
 dev = [

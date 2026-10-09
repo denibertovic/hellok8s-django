@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+{% load static %}
+{% load pixbin %}
+{% block title %}Python SDK - Pixbin SDK Demo{% endblock %}
+{% block content %}
+    <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
+        <!-- Header with Nav -->
+        <div class="absolute top-6 left-6 right-6 z-10 flex justify-between items-center">
+            <a href="{% url 'demo:pixbin_landing' %}"
+               class="flex items-center space-x-2 bg-gray-800 bg-opacity-50 hover:bg-opacity-70 backdrop-blur-sm rounded-lg px-4 py-2 border border-gray-700 border-opacity-50 hover:border-purple-500 hover:border-opacity-50 transition-all duration-300">
+                <svg class="w-5 h-5 text-white"
+                     fill="none"
+                     stroke="currentColor"
+                     viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                <span class="text-white text-sm font-medium">Back</span>
+            </a>
+            <!-- Navigation -->
+            <nav class="flex space-x-2 bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-lg p-1 border border-gray-700 border-opacity-50">
+                <a href="{% url 'demo:pixbin_upload' %}"
+                   class="px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors">
+                    Templates
+                </a>
+                <a href="{% url 'demo:pixbin_forms' %}"
+                   class="px-4 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors">
+                    Forms
+                </a>
+                <a href="{% url 'demo:pixbin_sdk' %}"
+                   class="px-4 py-2 rounded-md text-sm font-medium bg-blue-500 text-white">SDK</a>
+            </nav>
+        </div>
+        <!-- Main Content -->
+        <section class="px-6 py-24">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-12">
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
+                        Python <span class="text-blue-400">SDK</span>
+                    </h1>
+                    <p class="text-lg text-gray-300">Server-side API for uploads, downloads, and status checking</p>
+                </div>
+                {% if not sample_image %}
+                    <div class="mb-8 p-4 rounded-lg bg-yellow-500 bg-opacity-20 border border-yellow-500 border-opacity-50 text-yellow-300 text-center">
+                        No images found. <a href="{% url 'demo:pixbin_upload' %}" class="underline">Upload an image first</a> to test SDK features.
+                    </div>
+                {% endif %}
+                <div class="space-y-8">
+                    <!-- 1. Getting the Client -->
+                    <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 border-opacity-50">
+                        <h2 class="text-xl font-bold text-white mb-2">
+                            <code class="text-blue-400">get_pixbin_client()</code>
+                        </h2>
+                        <p class="text-gray-400 text-sm mb-4">Get a configured Pixbin client instance from Django settings</p>
+                        {# djlint:off #}
+                        <pre class="bg-gray-900 rounded-lg p-3 text-sm text-gray-300 overflow-x-auto"><code>from django_pixbin import get_pixbin_client
+
+# Uses PIXBIN_API_TOKEN and PIXBIN_BASE_URL from settings
+client = get_pixbin_client()
+
+# Upload a path or any file-like object (Django UploadedFile, BytesIO, ...)
+image_id = client.upload_file(request.FILES["image"])
+image_id = client.upload_file("photo.jpg", caption="Product photo", private=True)
+
+# upload_file waits for processing by default; pass max_wait=0 to return
+# right after the upload and let pixbin.js poll in the browser
+image_id = client.upload_file(io.BytesIO(image_bytes), max_wait=0)</code></pre>
+                        {# djlint:on #}
+                    </div>
+                    <!-- 2. get_status() -->
+                    <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 border-opacity-50">
+                        <h2 class="text-xl font-bold text-white mb-2">
+                            <code class="text-blue-400">client.get_status()</code>
+                        </h2>
+                        <p class="text-gray-400 text-sm mb-4">Check processing status and metadata of an image</p>
+                        {# djlint:off #}
+                        <pre class="bg-gray-900 rounded-lg p-3 text-sm text-gray-300 overflow-x-auto mb-4"><code>status = client.get_status(image_id)
+# Returns: {
+#     'id': 'uuid',
+#     'processing_status': 'completed',  # or 'pending', 'processing', 'failed', 'expired'
+#     'is_optimized': True,
+#     'width': 1920,
+#     'height': 1080,
+#     'file_size': 123456,
+#     'format': 'jpeg',
+#     'original_filename': 'photo.jpg',
+#     'caption': '',
+#     'private': False,
+#     'retention_period': -1,
+#     'expires_at': None,
+#     'created_at': '2026-01-11T22:23:00Z',
+# }</code></pre>
+                        {# djlint:on #}
+                        {% if sample_image %}
+                            <div class="flex items-center gap-4 mb-4">
+                                <span class="text-gray-400 text-sm">Test with:</span>
+                                <code class="text-purple-400 text-sm">{{ sample_image.image }}</code>
+                                <a href="?check_status=1"
+                                   class="py-1 px-3 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-colors">
+                                    Check Status
+                                </a>
+                            </div>
+                            {% if status_data %}
+                                <div class="bg-gray-900 rounded-lg p-4">
+                                    <p class="text-green-400 font-medium mb-2">Status Response:</p>
+                                    {# djlint:off #}
+                                    <pre class="text-gray-300 text-sm overflow-x-auto">{{ status_data }}</pre>
+                                    {# djlint:on #}
+                                </div>
+                            {% elif status_error %}
+                                <div class="bg-gray-900 rounded-lg p-4">
+                                    <p class="text-red-400 font-medium mb-2">Error:</p>
+                                    {# djlint:off #}
+                                    <pre class="text-gray-300 text-sm">{{ status_error }}</pre>
+                                    {# djlint:on #}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    <!-- 3. Download Functions -->
+                    <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 border-opacity-50">
+                        <h2 class="text-xl font-bold text-white mb-2">Download Functions</h2>
+                        <p class="text-gray-400 text-sm mb-4">Download original or transformed image bytes</p>
+                        {# djlint:off #}
+                        <pre class="bg-gray-900 rounded-lg p-3 text-sm text-gray-300 overflow-x-auto mb-4"><code># Download original image
+original_bytes = client.download_original(image_id)
+
+# Download transformed image
+transformed_bytes = client.download_transformed(
+    image_id,
+    'resize:300x300:fit,quality:85'
+)
+
+# Save to file or return as response (sniff the format, it may be webp or png)
+with open('output.jpg', 'wb') as f:
+    f.write(transformed_bytes)</code></pre>
+                        {# djlint:on #}
+                        {% if sample_image %}
+                            <div class="flex flex-wrap gap-4">
+                                <a href="{% url 'demo:pixbin_download' sample_image.image %}?type=original"
+                                   class="py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-colors">
+                                    Download Original
+                                </a>
+                                <a href="{% url 'demo:pixbin_download' sample_image.image %}?transform=resize:300x300:fit"
+                                   class="py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-colors">
+                                    Download 300x300
+                                </a>
+                                <a href="{% url 'demo:pixbin_download' sample_image.image %}?transform=resize:800x600:fit,grayscale"
+                                   class="py-2 px-4 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-colors">
+                                    Download Grayscale
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <!-- 4. Helper Functions -->
+                    <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 border-opacity-50">
+                        <h2 class="text-xl font-bold text-white mb-2">Helper Functions</h2>
+                        <p class="text-gray-400 text-sm mb-4">
+                            Convenience functions for common transformation patterns. The parameter strings below are generated by calling these helpers in the view.
+                        </p>
+                        {# djlint:off #}
+                        <pre class="bg-gray-900 rounded-lg p-3 text-sm text-gray-300 overflow-x-auto mb-4"><code>from pixbin import thumbnail, crop_square, optimize_web
+
+# Generate transformation parameters
+params = thumbnail(300, 300, quality=85)
+# Returns: 'resize:300x300:fit,quality:85'
+
+params = crop_square(200, 'center')
+# Returns: 'crop:center,resize:200x200:exact'
+
+params = optimize_web(max_width=1920, quality=85)
+# Returns: 'resize:1920x1920:fit,quality:85,format:webp'
+
+# Use with transform URL
+url = client.transform_url(image_id, params)</code></pre>
+                        {# djlint:on #}
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-gray-900 rounded-lg p-4">
+                                <p class="text-blue-400 text-sm font-mono mb-2">thumbnail(300, 300)</p>
+                                <p class="text-gray-500 text-xs mb-2">{{ helper_examples.thumbnail }}</p>
+                                {% if sample_image %}
+                                    <img src="{% pixbin_transform sample_image.image helper_examples.thumbnail %}"
+                                         alt="Thumbnail"
+                                         class="rounded border border-gray-600 w-full" />
+                                {% endif %}
+                            </div>
+                            <div class="bg-gray-900 rounded-lg p-4">
+                                <p class="text-blue-400 text-sm font-mono mb-2">crop_square(200)</p>
+                                <p class="text-gray-500 text-xs mb-2">{{ helper_examples.crop_square }}</p>
+                                {% if sample_image %}
+                                    <img src="{% pixbin_transform sample_image.image helper_examples.crop_square %}"
+                                         alt="Crop square"
+                                         class="rounded border border-gray-600 w-full" />
+                                {% endif %}
+                            </div>
+                            <div class="bg-gray-900 rounded-lg p-4">
+                                <p class="text-blue-400 text-sm font-mono mb-2">optimize_web()</p>
+                                <p class="text-gray-500 text-xs mb-2 truncate"
+                                   title="{{ helper_examples.optimize_web }}">{{ helper_examples.optimize_web }}</p>
+                                {% if sample_image %}
+                                    <img src="{% pixbin_transform sample_image.image helper_examples.optimize_web %}"
+                                         alt="Optimized"
+                                         class="rounded border border-gray-600 w-full" />
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 5. Error Handling -->
+                    <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 border-opacity-50">
+                        <h2 class="text-xl font-bold text-white mb-2">Error Handling</h2>
+                        <p class="text-gray-400 text-sm mb-4">Exception classes for handling different error scenarios</p>
+                        {# djlint:off #}
+                        <pre class="bg-gray-900 rounded-lg p-3 text-sm text-gray-300 overflow-x-auto mb-4"><code>from pixbin import (
+    PixbinError,       # Base exception
+    PixbinAuthError,   # Invalid/missing API token
+    PixbinQuotaError,  # Storage/bandwidth quota exceeded
+    PixbinUploadError, # Upload failed
+)
+
+try:
+    image_id = client.upload_file(file)
+except PixbinAuthError:
+    # Handle authentication failure
+    messages.error(request, "Invalid API token")
+except PixbinQuotaError:
+    # Handle quota exceeded
+    messages.error(request, "Storage quota exceeded")
+except PixbinUploadError as e:
+    # Handle upload failure
+    messages.error(request, f"Upload failed: {e}")
+except PixbinError as e:
+    # Handle any other Pixbin error
+    messages.error(request, f"Error: {e}")</code></pre>
+                        {# djlint:on #}
+                        <div class="bg-gray-900 rounded-lg p-4">
+                            <p class="text-gray-400 text-sm mb-2">Exception Hierarchy:</p>
+                            {# djlint:off #}
+                            <pre class="text-gray-300 text-sm font-mono">PixbinError (base)
+├── PixbinAuthError
+├── PixbinQuotaError
+└── PixbinUploadError</pre>
+                            {# djlint:on #}
+                        </div>
+                    </div>
+                    <!-- 6. Management Commands -->
+                    <div class="bg-gray-800 bg-opacity-50 backdrop-blur-sm rounded-2xl p-6 border border-gray-700 border-opacity-50">
+                        <h2 class="text-xl font-bold text-white mb-2">Management Commands</h2>
+                        <p class="text-gray-400 text-sm mb-4">CLI tools for configuration and uploads</p>
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="text-white font-semibold mb-2">pixbin_status</h3>
+                                <p class="text-gray-400 text-sm mb-2">Check Pixbin configuration and API connectivity</p>
+                                {# djlint:off #}
+                                <pre class="bg-gray-900 rounded-lg p-3 text-sm text-gray-300 overflow-x-auto"><code>$ python manage.py pixbin_status
+Checking Pixbin configuration...
+
+[ok] PIXBIN_API_TOKEN is set
+[ok] PIXBIN_BASE_URL: https://pixbin.net
+[ok] Pixbin client initialized
+  Base URL: https://pixbin.net
+  API Token: pk_abc12...
+
+Configuration check complete!</code></pre>
+                                {# djlint:on #}
+                            </div>
+                            <div>
+                                <h3 class="text-white font-semibold mb-2">pixbin_upload</h3>
+                                <p class="text-gray-400 text-sm mb-2">Upload images from command line</p>
+                                {# djlint:off #}
+                                <pre class="bg-gray-900 rounded-lg p-3 text-sm text-gray-300 overflow-x-auto"><code>$ python manage.py pixbin_upload photo.jpg photo2.png
+Uploading 2 file(s) to Pixbin...
+
+Uploading photo.jpg... [ok]
+  Image ID: 550e8400-e29b-41d4-a716-446655440000
+  Original: https://pixbin.net/api/v1/image/550e8400-...
+  Thumbnail: https://pixbin.net/api/v1/image/3f1c.../resize:300x300:fit/550e8400-...
+
+Uploading photo2.png... [ok]
+  Image ID: 6ba7b810-9dad-11d1-80b4-00c04fd430c8
+  Original: https://pixbin.net/api/v1/image/6ba7b810-...
+  Thumbnail: https://pixbin.net/api/v1/image/9a2e.../resize:300x300:fit/6ba7b810-...
+
+Successfully uploaded: 2
+
+# With options
+$ python manage.py pixbin_upload photo.jpg \
+    --caption "Product photo" \
+    --private \
+    --retention-hours 24</code></pre>
+                                {# djlint:on #}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}

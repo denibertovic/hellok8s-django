@@ -294,23 +294,14 @@ wheels = [
 [[package]]
 name = "django-pixbin"
 version = "0.1.0"
-source = { editable = "../django-pixbin" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
     { name = "pixbin", extra = ["full"] },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "django", specifier = ">=3.2" },
-    { name = "pixbin", extras = ["full"], editable = "../pixbin-python" },
-]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "pytest" },
-    { name = "pytest-cov" },
-    { name = "pytest-django" },
+sdist = { url = "https://files.pythonhosted.org/packages/ee/94/d1eabfe0cd64a126709f74083c5d49ba55ed75f719df92652ade59517587/django_pixbin-0.1.0.tar.gz", hash = "sha256:00b398d98ca91d827c12d977fa88c3c859ac8b067b3515ffc46251977d56b44d", size = 31271, upload-time = "2026-10-09T19:26:33.864Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/bd/28/4ae245c8528e4cf0328635994b17d24aad5ea0c99f43337c2a4a2441cfda/django_pixbin-0.1.0-py3-none-any.whl", hash = "sha256:acbe1f281cdabe93d5481f281ec4142af6699466babbf5d401de132e83d847e7", size = 32101, upload-time = "2026-10-09T19:26:32.485Z" },
 ]
 
 [[package]]
@@ -439,13 +430,13 @@ requires-dist = [
     { name = "django-allauth", specifier = ">=65.11.1" },
     { name = "django-cf-turnstile", specifier = ">=0.1.0" },
     { name = "django-environ", specifier = ">=0.12.0" },
-    { name = "django-pixbin", editable = "../django-pixbin" },
+    { name = "django-pixbin", specifier = ">=0.1.0" },
     { name = "django-ratelimit", specifier = ">=4.1.0" },
     { name = "django-storages", specifier = ">=1.14.6" },
     { name = "djangorestframework", specifier = ">=3.16.0" },
     { name = "djlint", specifier = ">=1.36.4" },
     { name = "gunicorn", specifier = ">=23.0.0" },
-    { name = "pixbin", extras = ["full"], editable = "../pixbin-python" },
+    { name = "pixbin", extras = ["full"], specifier = ">=0.1.0" },
     { name = "psycopg2", specifier = ">=2.9.10" },
     { name = "redis", specifier = ">=6.4.0" },
 ]
@@ -669,28 +660,19 @@ wheels = [
 [[package]]
 name = "pixbin"
 version = "0.1.0"
-source = { editable = "../pixbin-python" }
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "requests" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/03/f5/d84d8bb47e2c5123e8af20ba73bddb5c15bd926eeb073196fc14b9f65729/pixbin-0.1.0.tar.gz", hash = "sha256:90b9fa6470f64da272ec92abec2f1ad7835c645e4f666fb0224975c1d338bfc5", size = 18257, upload-time = "2026-10-09T14:57:52.408Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fa/62/144b1d151b8367fc88e8d49591495010907b96bdfe98fd8c6e8f2905af7d/pixbin-0.1.0-py3-none-any.whl", hash = "sha256:2c600bc247a7501994ef99f9a9af0fca1d2981fa1632f7b8064fc53ff892bb65", size = 10309, upload-time = "2026-10-09T14:57:50.986Z" },
 ]
 
 [package.optional-dependencies]
 full = [
     { name = "pillow" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "pillow", marker = "extra == 'full'", specifier = ">=9.0.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0" },
-    { name = "requests", specifier = ">=2.25.0" },
-    { name = "responses", marker = "extra == 'dev'", specifier = ">=0.23" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.16" },
-]
-provides-extras = ["full", "dev"]
-
-[package.metadata.requires-dev]
-dev = [{ name = "pixbin", extras = ["dev", "full"] }]
 
 [[package]]
 name = "prompt-toolkit"

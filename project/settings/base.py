@@ -261,5 +261,5 @@ CF_TURNSTILE_SECRET_KEY = env.get_value(
 ALLOW_REGISTRATION = env.bool("DJANGO_ALLOW_REGISTRATION", default=False)
 
 # Pixbin Configuration
-PIXBIN_API_TOKEN = env.get_value("PIXBIN_API_TOKEN", default="")
-PIXBIN_BASE_URL = env.get_value("PIXBIN_BASE_URL", default="https://pixbin.net")
+PIXBIN_API_TOKEN = env.get_value("DJANGO_PIXBIN_API_TOKEN", default="")
+PIXBIN_BASE_URL = env.get_value("DJANGO_PIXBIN_BASE_URL", default="https://pixbin.net")

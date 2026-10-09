@@ -67,7 +67,7 @@
   # but also for frontend components if necessary
   languages.javascript = {
     enable = true;
-    package = pkgs.nodejs_23;
+    package = pkgs.nodejs_24;
     yarn.enable = true;
     yarn.package = pkgs.yarn-berry;
     yarn.install.enable = true;

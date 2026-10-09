@@ -125,6 +125,7 @@ appConfig:
   awsS3RegionName: null
   awsAccessKeyId: null
   awsSecretAccessKey: null
+  pixbinApiToken: null
 
 
 migrations:

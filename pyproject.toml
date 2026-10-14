@@ -28,6 +28,7 @@ dev = [
     "django-browser-reload>=1.18.0",
     "ipython>=9.3.0",
     "pywatchman>=3.0.0",
+    "ruff==0.15.20",
 ]
 
 [tool.djlint]

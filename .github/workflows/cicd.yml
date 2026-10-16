@@ -111,11 +111,14 @@ jobs:
     needs: ["lint", "format", "test", "helm-lint"]
     secrets: inherit
   deploy_prod:
-    uses: ./.github/workflows/deploy.yml
+    uses: denibertovic/ghws/.github/workflows/k8s-deploy.yml@v1.0.0
     if: github.ref == 'refs/heads/main'
     needs: ["build"]
     with:
       environment: "prod"
       namespace: "hellok8s"
       url: https://hellok8s-django.deni.cloud
+      cluster_server: https://daenerys.initeq.net:6443
+      cluster_ca_url: https://deni.cloud/k8s-ca.crt
+      oidc_audience: daenerys-prod-k8s
     secrets: inherit
